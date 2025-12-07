@@ -64,10 +64,16 @@
               <div class="flex items-center space-x-4">
                 <!-- Language Picker -->
                 <div class="relative inline-block">
-                    <select class="appearance-none px-4 py-2 border border-gray-300 rounded-lg pr-10 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                        <option value="en">EN</option>
-                        <option value="fi">FI</option>
-                        <option value="sv">SV</option>
+                    <select 
+                    onchange="window.location.href = this.value" 
+                    class="appearance-none px-4 py-2 border border-gray-300 rounded-lg pr-10 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        @foreach (config('app.available_locales') as $locale)
+                            <option @if(app()->getLocale() == $locale) selected @endif 
+                                value="{{ route(\Route::currentRouteName(), array_merge(\Route::current()->parameters(), ['locale' => $locale])) }}" 
+                                value="{{ $locale }}">
+                                {{ strtoupper($locale) }}
+                            </option>
+                        @endforeach
                     </select>
                     <!-- Dropdown Icon -->
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
@@ -82,7 +88,7 @@
                     href="{{ url('/dashboard') }}"
                     class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
                 >
-                    Dashboard
+                {{ __('dashboard') }}
                 </a>
 
                 
@@ -139,7 +145,7 @@
                             @click="loginModal = true" 
                             class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                         >
-                            Login
+                        {{ __('login') }}
                         </button>
 
                         <!-- Modal Overlay -->
@@ -161,7 +167,7 @@
                                 >&times;</button>
 
                                 <!-- Header -->
-                                <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Login to Your Account</h2>
+                                <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">{{ __('loginToAccount') }}</h2>
 
                                 <!-- Google Auth Button -->
                                 <a 
@@ -169,12 +175,12 @@
                                     class="flex items-center justify-center gap-2 w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
                                 >
                                     <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
-                                    <span class="text-gray-700 font-medium">Continue with Google</span>
+                                    <span class="text-gray-700 font-medium">{{ __('googleLogin') }}</span>
                                 </a>
 
                                 <div class="flex items-center my-4">
                                     <div class="flex-1 h-px bg-gray-200"></div>
-                                    <span class="px-3 text-sm text-gray-500">or</span>
+                                    <span class="px-3 text-sm text-gray-500">{{ __('or') }}</span>
                                     <div class="flex-1 h-px bg-gray-200"></div>
                                 </div>
 
@@ -183,7 +189,7 @@
                                     @csrf
 
                                     <div class="flex flex-col">
-                                        <label for="email" class="text-gray-700 font-medium mb-1">Email</label>
+                                        <label for="email" class="text-gray-700 font-medium mb-1">{{ __('email') }}</label>
                                         <input 
                                             type="email" 
                                             name="email" 
@@ -195,7 +201,7 @@
                                     </div>
 
                                     <div class="flex flex-col">
-                                        <label for="password" class="text-gray-700 font-medium mb-1">Password</label>
+                                        <label for="password" class="text-gray-700 font-medium mb-1">{{ __('password') }}</label>
                                         <input 
                                             type="password" 
                                             name="password" 
@@ -209,26 +215,26 @@
                                     <div class="flex items-center justify-between">
                                         <label class="flex items-center space-x-2">
                                             <input type="checkbox" name="remember" class="rounded text-blue-600 focus:ring-blue-400">
-                                            <span class="text-sm text-gray-700">Remember me</span>
+                                            <span class="text-sm text-gray-700">{{ __('rememberMe') }}</span>
                                         </label>
-                                        <a href="{{ route('password.request') }}" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
+                                        <a href="{{ route('password.request') }}" class="text-sm text-blue-600 hover:underline">{{ __('forgotPassword') }}</a>
                                     </div>
 
                                     <button 
                                         type="submit"
                                         class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                                     >
-                                        Login
+                                    {{ __('login') }}
                                     </button>
                                 </form>
 
                                 <p class="mt-4 text-sm text-gray-600 text-center">
-                                    Don’t have an account?
+                                    {{ __('dontHaveAccount') }}
                                     <button 
                                         @click="loginModal = false; $dispatch('open-register-modal')"
                                         class="text-green-600 hover:underline"
                                     >
-                                        Register
+                                    {{ __('register') }}
                                     </button>
                                 </p>
                             </div>
@@ -242,7 +248,7 @@
                             @click="registerModal = true" 
                             class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
                         >
-                            Register
+                        {{ __('register') }}
                         </button>
 
                         <!-- Modal Overlay -->
@@ -264,7 +270,7 @@
                                 >&times;</button>
 
                                 <!-- Header -->
-                                <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Create an Account</h2>
+                                <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">{{ __('createAccount') }}</h2>
 
                                 <!-- Google Auth Button -->
                                 <a 
@@ -272,7 +278,7 @@
                                     class="flex items-center justify-center gap-2 w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
                                 >
                                     <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
-                                    <span class="text-gray-700 font-medium">Continue with Google</span>
+                                    <span class="text-gray-700 font-medium">{{ __('googleLogin') }}</span>
                                 </a>
 
                                 <div class="flex items-center my-4">
@@ -286,7 +292,7 @@
                                     @csrf
 
                                     <div class="flex flex-col">
-                                        <label for="name" class="text-gray-700 font-medium mb-1">Full Name</label>
+                                        <label for="name" class="text-gray-700 font-medium mb-1">{{ __('fullName') }}</label>
                                         <input 
                                             type="text" 
                                             name="name" 
@@ -298,7 +304,7 @@
                                     </div>
 
                                     <div class="flex flex-col">
-                                        <label for="email" class="text-gray-700 font-medium mb-1">Email</label>
+                                        <label for="email" class="text-gray-700 font-medium mb-1">{{ __('email') }}</label>
                                         <input 
                                             type="email" 
                                             name="email" 
@@ -310,7 +316,7 @@
                                     </div>
 
                                     <div class="flex flex-col">
-                                        <label for="password" class="text-gray-700 font-medium mb-1">Password</label>
+                                        <label for="password" class="text-gray-700 font-medium mb-1">{{ __('password') }}</label>
                                         <input 
                                             type="password" 
                                             name="password" 
@@ -322,7 +328,7 @@
                                     </div>
 
                                     <div class="flex flex-col">
-                                        <label for="password_confirmation" class="text-gray-700 font-medium mb-1">Confirm Password</label>
+                                        <label for="password_confirmation" class="text-gray-700 font-medium mb-1">{{ __('confirmPassword') }}</label>
                                         <input 
                                             type="password" 
                                             name="password_confirmation" 
@@ -337,17 +343,17 @@
                                         type="submit"
                                         class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
                                     >
-                                        Register
+                                    {{ __('register') }}
                                     </button>
                                 </form>
 
                                 <p class="mt-4 text-sm text-gray-600 text-center">
-                                    Already have an account?
+                                    {{ __('haveAccount') }}
                                     <button 
                                         @click="registerModal = false; $dispatch('open-login-modal')"
                                         class="text-blue-600 hover:underline"
                                     >
-                                        Login
+                                    {{ __('login') }}
                                     </button>
                                 </p>
                             </div>

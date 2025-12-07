@@ -14,7 +14,10 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-sans antialiased" x-data="theme()" 
+    :class="{ 'dark': isDark }" 
+    x-init="loadTheme()"
+    >
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
 
@@ -32,5 +35,20 @@
                 {{ $slot }}
             </main>
         </div>
+
+        <script>
+            function theme() {
+                return {
+                    isDark: false,
+                    toggle() {
+                        this.isDark = !this.isDark;
+                        localStorage.setItem('dark', this.isDark ? '1' : '0');
+                    },
+                    loadTheme() {
+                        this.isDark = localStorage.getItem('dark') === '1';
+                    }
+                }
+            }
+        </script>
     </body>
 </html>

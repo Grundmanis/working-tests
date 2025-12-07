@@ -1,24 +1,53 @@
 <?php
 
+use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DogController;
-use App\Http\Controllers\EventControler;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PeopleController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Dashboard\EventController as DashboardEventController;
+use App\Http\Controllers\OrganizationController;
+use Illuminate\Support\Facades\Session;
 
 Route::get('/', function () {
-    return view('welcome');
-})->name('events');
+    $locale = 'en';
+    if (Session::has('locale')) {
+        $locale = Session::get('locale');
+    }
 
+    return redirect('/'.$locale);
+});
+
+Route::prefix('{locale}')
+    ->where(['locale' => implode('|', config('app.available_locales'))])
+    ->group(function () {
+        Route::get('/', [HomeController::class, 'index'])->name('events');
+    });
 
 Route::get('/registerDog', function () {
     return view('registerDog');
 })->name('registerDog');
 
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::prefix('dashboard')->middleware(['auth', 'verified'])->group(function() {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+
+    Route::get('events/create', [DashboardEventController::class, 'create'])->name('dashboard.event.create');
+    Route::get('/events/{event}', [DashboardEventController::class, 'show'])->name('dashboard.event.show');
+    Route::get('/events/{event}/edit', [DashboardEventController::class, 'edit'])->name('dashboard.event.edit');
+    
+    Route::put('/events/{event}', [DashboardEventController::class, 'update'])
+        ->name('dashboard.event.update');
+
+
+    Route::post('/events', [DashboardEventController::class, 'store'])
+    ->name('dashboard.event.store');
+
+    Route::resource('organizations', OrganizationController::class);
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -34,9 +63,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/people/edit', [PeopleController::class, 'edit'])->name('people.edit');
     Route::get('/people/add', [PeopleController::class, 'add'])->name('people.add');
 
-    Route::get('/events', [EventControler::class, 'index'])->name('events.index');
-    Route::get('/events/edit', [EventControler::class, 'edit'])->name('events.edit');
-    Route::get('/events/add', [EventControler::class, 'add'])->name('events.add');
+    Route::get('/events', [EventController::class, 'index'])->name('events.index');
+    Route::get('/events/edit', [EventController::class, 'edit'])->name('events.edit');
+    Route::get('/events/add', [EventController::class, 'add'])->name('events.add');
 });
 
 require __DIR__.'/auth.php';

@@ -13,7 +13,7 @@ class PeopleController extends Controller
      */
     public function index(Request $request): View
     {
-        return view('people.index', [
+        return view('pages.people.index', [
             'dogs' => [],
         ]);
     }
@@ -23,7 +23,7 @@ class PeopleController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('people.edit', [
+        return view('pages.people.edit', [
             'dog' => [],
         ]);
     }
@@ -33,7 +33,7 @@ class PeopleController extends Controller
      */
     public function add(Request $request): View
     {
-        return view('people.add', [
+        return view('pages.people.add', [
             'dog' => [],
         ]);
     }
