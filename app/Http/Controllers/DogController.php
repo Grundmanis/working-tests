@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateDogRequest;
+use App\Models\Dog;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -12,19 +14,38 @@ class DogController extends Controller
      */
     public function index(Request $request): View
     {
-        return view('dogs.index', [
-            'dogs' => [],
+        $dogs = Dog::where('user_id', auth()->id())->get();
+        return view('pages.dogs.index', [
+            'dogs' => $dogs,
         ]);
     }
 
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    public function edit(Dog $dog): View
     {
-        return view('dogs.edit', [
-            'dog' => [],
+        return view('pages.dogs.edit', [
+            'dog' => $dog,
         ]);
+    }
+
+    public function update(UpdateDogRequest $request, Dog $dog)
+    {
+        $dog->fill([
+            'registeredName' => $request->registeredName,
+            'homeName' => $request->homeName,
+            'registrationNumber' => $request->registrationNumber,
+            'microchip' => $request->microchip,
+            'dob' => $request->dob,
+            'gender' => $request->gender,
+            'breed' => $request->breed,
+        ]);
+        $dog->save();
+
+        return redirect()
+            ->route('dogs.edit', $dog->id)
+            ->with('success', 'Dog updated successfully.');
     }
 
     /**
@@ -32,7 +53,7 @@ class DogController extends Controller
      */
     public function add(Request $request): View
     {
-        return view('dogs.add', [
+        return view('pages.dogs.add', [
             'dog' => [],
         ]);
     }

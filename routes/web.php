@@ -17,7 +17,7 @@ Route::get('/', function () {
         $locale = Session::get('locale');
     }
 
-    return redirect('/'.$locale);
+    return redirect('/' . $locale);
 });
 
 Route::prefix('{locale}')
@@ -31,20 +31,20 @@ Route::get('/registerDog', function () {
 })->name('registerDog');
 
 
-Route::prefix('dashboard')->middleware(['auth', 'verified'])->group(function() {
+Route::prefix('dashboard')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 
     Route::get('events/create', [DashboardEventController::class, 'create'])->name('dashboard.event.create');
     Route::get('/events/{event}', [DashboardEventController::class, 'show'])->name('dashboard.event.show');
     Route::get('/events/{event}/edit', [DashboardEventController::class, 'edit'])->name('dashboard.event.edit');
-    
+
     Route::put('/events/{event}', [DashboardEventController::class, 'update'])
         ->name('dashboard.event.update');
 
 
     Route::post('/events', [DashboardEventController::class, 'store'])
-    ->name('dashboard.event.store');
+        ->name('dashboard.event.store');
 
     Route::resource('organizations', OrganizationController::class);
 });
@@ -55,9 +55,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 
-    Route::get('/dogs', [DogController::class, 'index'])->name('dogs.index');
-    Route::get('/dogs/edit', [DogController::class, 'edit'])->name('dogs.edit');
-    Route::get('/dogs/add', [DogController::class, 'add'])->name('dogs.add');
+    // Route::get('/dogs', [DogController::class, 'index'])->name('dogs.index');
+    // Route::get('/dogs/edit', [DogController::class, 'edit'])->name('dogs.edit');
+    // Route::get('/dogs/add', [DogController::class, 'add'])->name('dogs.add');
 
     Route::get('/people', [PeopleController::class, 'index'])->name('people.index');
     Route::get('/people/edit', [PeopleController::class, 'edit'])->name('people.edit');
@@ -66,6 +66,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/events', [EventController::class, 'index'])->name('events.index');
     Route::get('/events/edit', [EventController::class, 'edit'])->name('events.edit');
     Route::get('/events/add', [EventController::class, 'add'])->name('events.add');
+
+
+    Route::resource('dogs', DogController::class);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

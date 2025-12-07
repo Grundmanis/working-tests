@@ -15,6 +15,7 @@
                 class="space-y-6 bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg">
                 @csrf
                 @method('PUT')
+
                 <!-- Event Name -->
                 <div>
                     <label class="block dark:text-gray-200 font-semibold">Event Name</label>
