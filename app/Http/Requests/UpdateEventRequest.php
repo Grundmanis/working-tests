@@ -31,16 +31,15 @@ class UpdateEventRequest extends FormRequest
             'description' => 'required|string',
             'judges' => 'array|min:1',
             'judges.*' => 'exists:judges,id',
-
             // JSON payload of disciplines
             'disciplines_payload' => 'required|array',
             'disciplines_payload.*.id' => ['required', 'integer'],
             'disciplines_payload.*.id' => ['required', 'integer', 'exists:disciplines,id'],
             'disciplines_payload.*.day' => ['required', 'date'],
             'disciplines_payload.*.max_participants' => ['required', 'integer'],
-    
             'disciplines_payload.*.categories' => ['required', 'array', 'min:1'],
             'disciplines_payload.*.categories.*.id' => ['required', 'integer', 'exists:categories,id'],
+            // TODO: add prices and settings
         ];
     }
 
@@ -49,6 +48,11 @@ class UpdateEventRequest extends FormRequest
         $this->merge([
             'judges' => json_decode($this->judges, true),
             'disciplines_payload' => json_decode($this->disciplines_payload, true),
+            'settings' => isset($this->settings) ? $this->settings : [
+                'club_discount' => false,
+                'prepayment_required' => false,
+                'breakfast_included' => false
+            ],
         ]);
     }
 }

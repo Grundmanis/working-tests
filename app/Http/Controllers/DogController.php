@@ -27,6 +27,7 @@ class DogController extends Controller
     {
         return view('pages.dogs.edit', [
             'dog' => $dog,
+            'breeds' => Dog::$breeds,
         ]);
     }
 
@@ -51,10 +52,30 @@ class DogController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function add(Request $request): View
+    public function create(Request $request): View
     {
-        return view('pages.dogs.add', [
-            'dog' => [],
+        return view('pages.dogs.create', [
+            'breeds' => Dog::$breeds,
         ]);
+    }
+
+    public function store(UpdateDogRequest $request)
+    {
+        $dog = new Dog();
+        $dog->fill([
+            'registeredName' => $request->registeredName,
+            'homeName' => $request->homeName,
+            'registrationNumber' => $request->registrationNumber,
+            'microchip' => $request->microchip,
+            'dob' => $request->dob,
+            'gender' => $request->gender,
+            'breed' => $request->breed,
+            'user_id' => auth()->id(),
+        ]);
+        $dog->save();
+
+        return redirect()
+            ->route('dogs.index')
+            ->with('success', 'Dog created successfully.');
     }
 }

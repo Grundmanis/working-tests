@@ -24,7 +24,7 @@ class UpdateDogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'registeredName' => 'required|string',
+            'registeredName' => ['required', 'string', Rule::unique('dogs', 'registeredName')->ignore($this->route('dog'))],
             'homeName' => 'required|string',
             'registrationNumber' => 'required|string',
             'microchip' => 'required|string',

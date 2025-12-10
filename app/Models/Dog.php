@@ -38,9 +38,4 @@ class Dog extends Model
     {
         return self::$breeds[$this->breed] ?? $this->breed;
     }
-
-    public function breeds()
-    {
-        return self::$breeds;
-    }
 }

@@ -8,22 +8,26 @@ class DisciplineEvent extends Pivot
 {
     protected $table = 'discipline_event';
 
-    public $timestamps = true; 
+    public $timestamps = true;
 
     protected $fillable = [
         'event_id',
         'discipline_id',
         'day',
-        'max_participants'
+        'max_participants',
+        'price',
+        'member_price'
     ];
 
     protected $dates = ['day'];
 
-    public function event() {
+    public function event()
+    {
         return $this->belongsTo(Event::class);
     }
 
-    public function discipline() {
+    public function discipline()
+    {
         return $this->belongsTo(Discipline::class);
     }
 

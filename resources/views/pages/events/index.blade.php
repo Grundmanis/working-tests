@@ -185,7 +185,7 @@
                                 <div class="flex items-center pl-1">
                                     {{-- <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div> --}}
                                     <button type="button"
-                                        onclick="event.stopPropagation(); window.location.href='{{ route('registerDog') }}'"
+                                        onclick="event.stopPropagation(); window.location.href='{{ route('events.registerForm', $event->id) }}'"
                                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Register</button>
                                 </div>
                             </td>

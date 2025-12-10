@@ -5,7 +5,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DogController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PeopleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Dashboard\EventController as DashboardEventController;
 use App\Http\Controllers\OrganizationController;
@@ -25,11 +24,6 @@ Route::prefix('{locale}')
     ->group(function () {
         Route::get('/', [HomeController::class, 'index'])->name('events');
     });
-
-Route::get('/registerDog', function () {
-    return view('registerDog');
-})->name('registerDog');
-
 
 Route::prefix('dashboard')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -54,18 +48,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-
-    // Route::get('/dogs', [DogController::class, 'index'])->name('dogs.index');
-    // Route::get('/dogs/edit', [DogController::class, 'edit'])->name('dogs.edit');
-    // Route::get('/dogs/add', [DogController::class, 'add'])->name('dogs.add');
-
-    Route::get('/people', [PeopleController::class, 'index'])->name('people.index');
-    Route::get('/people/edit', [PeopleController::class, 'edit'])->name('people.edit');
-    Route::get('/people/add', [PeopleController::class, 'add'])->name('people.add');
-
     Route::get('/events', [EventController::class, 'index'])->name('events.index');
-    Route::get('/events/edit', [EventController::class, 'edit'])->name('events.edit');
-    Route::get('/events/add', [EventController::class, 'add'])->name('events.add');
+    Route::get('/events/{event}/register', [EventController::class, 'registerForm'])->name('events.registerForm');
 
 
     Route::resource('dogs', DogController::class);

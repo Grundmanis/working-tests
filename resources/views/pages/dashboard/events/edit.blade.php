@@ -162,6 +162,90 @@
                     <input type="hidden" name="judges" :value="JSON.stringify(judgesToSend)">
                 </div>
 
+                <!-- Options / Flags -->
+                <div class="mt-4 space-y-2">
+                    <label class="flex items-center gap-2 dark:text-gray-200">
+                        <input x-model="clubDiscount" type="checkbox" name="settings[club_discount]" value="1"
+                            class="rounded border-gray-300 dark:border-gray-600">
+                        Club member discount
+                    </label>
+
+                    <label class="flex items-center gap-2 dark:text-gray-200">
+                        <input x-model="prepaymentRequired" type="checkbox" name="settings[prepayment_required]"
+                            value="1" class="rounded border-gray-300 dark:border-gray-600">
+                        Pre-payment required
+                    </label>
+
+                    <label class="flex items-center gap-2 dark:text-gray-200">
+                        <input x-model="breakfastIncluded" type="checkbox" name="settings[breakfast_included]"
+                            value="1" class="rounded border-gray-300 dark:border-gray-600">
+                        Breakfast included in accommodation
+                    </label>
+                </div>
+
+                <!-- Prices -->
+                <div class="mt-4 bg-white dark:bg-gray-900 rounded-lg">
+                    <label class="block dark:text-gray-200 font-semibold">Prices</label>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+                        <div>
+                            <label class="text-sm dark:text-gray-200">Pre-payment</label>
+
+                            <input :disabled="!prepaymentRequired" type="number" step="0.01"
+                                name="prices[prepayment]"
+                                value={{ old('prices[prepayment]', $event->prepayment_price) }}
+                                class="w-full border rounded-md px-3 py-1.5 text-sm
+                                       dark:bg-gray-800 dark:text-gray-100
+                                       disabled:opacity-50 
+                                       disabled:bg-gray-100 
+                                       disabled:cursor-not-allowed
+                                       dark:disabled:bg-gray-700">
+                        </div>
+
+                        <div>
+                            <label class="text-sm dark:text-gray-200">Breakfast</label>
+                            <input :disabled="breakfastIncluded" type="number" step="0.01"
+                                name="prices[breakfast]" value={{ old('prices[breakfast]', $event->breakfast_price) }}
+                                class="w-full border rounded-md px-3 py-1.5 text-sm
+                                       dark:bg-gray-800 dark:text-gray-100
+                                       disabled:opacity-50 
+                                       disabled:bg-gray-100 
+                                       disabled:cursor-not-allowed
+                                       dark:disabled:bg-gray-700">
+                        </div>
+
+                        <div>
+                            <label class="text-sm dark:text-gray-200">Lunch</label>
+                            <input type="number" step="0.01" name="prices[lunch]"
+                                value={{ old('prices[lunch]', $event->lunch_price) }}
+                                class="w-full border rounded-md px-3 py-1.5 text-sm dark:bg-gray-800 dark:text-gray-100">
+                        </div>
+
+                        <div>
+                            <label class="text-sm dark:text-gray-200">Dinner</label>
+                            <input type="number" step="0.01" name="prices[dinner]"
+                                value={{ old('prices[dinner]', $event->dinner_price) }}
+                                class="w-full border rounded-md px-3 py-1.5 text-sm dark:bg-gray-800 dark:text-gray-100">
+                        </div>
+
+                        <div>
+                            <label class="text-sm dark:text-gray-200">Accomodation</label>
+                            <input type="number" step="0.01" name="prices[accommodation]"
+                                value={{ old('prices[accommodation]', $event->accommodation_price) }}
+                                class="w-full border rounded-md px-3 py-1.5 text-sm dark:bg-gray-800 dark:text-gray-100">
+                        </div>
+
+                        <div>
+                            <label class="text-sm dark:text-gray-200">Per dog</label>
+                            <input type="number" step="0.01" name="prices[per_dog]"
+                                value={{ old('prices[per_dog]', $event->per_dog_price) }}
+                                class="w-full border rounded-md px-3 py-1.5 text-sm dark:bg-gray-800 dark:text-gray-100">
+                        </div>
+                    </div>
+                </div>
+
+
                 <!-- Add Discipline -->
                 <div>
                     <label class="text-gray-700 dark:text-gray-200">Add Discipline</label>
@@ -209,6 +293,20 @@
                                 <input type="number" x-model="disc.max_participants"
                                     class="w-full border dark:border-gray-700 rounded-md px-3 py-2 dark:bg-gray-800 dark:text-gray-100">
                             </div>
+                            <div class="mt-3">
+                                <label class="dark:text-gray-200">Participation price</label>
+                                <input type="number" x-model="disc.price"
+                                    class="w-full border dark:border-gray-700 rounded-md px-3 py-2 dark:bg-gray-800 dark:text-gray-100">
+                            </div>
+                            <div class="mt-3">
+                                <label class="dark:text-gray-200">Participation price (For club members)</label>
+                                <input type="number" :disabled="!clubDiscount" x-model="disc.member_price"
+                                    class="w-full border dark:border-gray-700 rounded-md px-3 py-2 dark:bg-gray-800 dark:text-gray-100 
+                                       disabled:opacity-50 
+                                       disabled:bg-gray-100 
+                                       disabled:cursor-not-allowed
+                                       dark:disabled:bg-gray-700">
+                            </div>
 
                             <!-- Categories -->
                             <div class="mt-3">
@@ -244,7 +342,6 @@
                     </template>
                 </div>
 
-
                 <!-- Hidden output -->
                 <textarea hidden name="disciplines_payload" x-text="JSON.stringify(disciplines)"></textarea>
 
@@ -273,6 +370,8 @@
                     'name' => $d->name,
                     'day' => $d->pivot->day ?? '',
                     'max_participants' => $d->pivot->max_participants ?? 0,
+                    'price' => $d->pivot->price ?? 0,
+                    'member_price' => $d->pivot->member_price ?? 0,
                     'categories' => $categories,
                 ];
             })
@@ -290,6 +389,9 @@
                 judgesToSend: @json($judgeIds ?? []),
                 showNewJudge: false,
                 newJudge: "",
+                clubDiscount: @json(old('settings[club_discount]', $event->has_club_discount)),
+                prepaymentRequired: @json(old('settings[prepayment_required]', $event->is_prepayment_required)),
+                breakfastIncluded: @json(old('settings[breakfast_included]', $event->is_breakfast_included)),
 
                 addJudge() {
                     if (!this.selectedJudge) return;

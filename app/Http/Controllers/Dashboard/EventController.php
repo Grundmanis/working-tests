@@ -34,7 +34,7 @@ class EventController extends Controller
         $disciplines = Discipline::all();
         $categories = Category::all();
         $userId = auth()->id();
-        $organizations = Organization::whereHas('members', function($query) use ($userId) {
+        $organizations = Organization::whereHas('members', function ($query) use ($userId) {
             $query->where('users.id', $userId);
         })->get();
 
@@ -92,7 +92,6 @@ class EventController extends Controller
                 $categoryIds = collect($d['categories'])->pluck('id')->toArray();
                 $disciplineEvent->categories()->sync($categoryIds);
             }
-
         });
 
         return redirect()
@@ -120,14 +119,14 @@ class EventController extends Controller
         $disciplines = Discipline::all();
         $categories = Category::all();
         $userId = auth()->id();
-        $organizations = Organization::whereHas('members', function($query) use ($userId) {
+        $organizations = Organization::whereHas('members', function ($query) use ($userId) {
             $query->where('users.id', $userId);
         })->get();
 
         // Load event with disciplines and pivot
         $event->load([
             'disciplines' => function ($q) {
-                $q->withPivot('id', 'day');
+                $q->withPivot('id', 'day', 'max_participants', 'price', 'member_price');
             }
         ]);
 
@@ -147,7 +146,7 @@ class EventController extends Controller
                 $pivot->categories = collect();
             }
         });
-    
+
         return view('pages.dashboard.events.edit', [
             'event' => $event,
             'locations' => $locations,
@@ -174,7 +173,16 @@ class EventController extends Controller
                 'description' => $request->description,
                 'location_id' => $request->location_id,
                 'secretary' => $request->secretary,
-                'organization_id' => $request->organization_id
+                'organization_id' => $request->organization_id,
+                'has_club_discount' => isset($request->settings['club_discount']) ? true : false,
+                'is_breakfast_included' => isset($request->settings['breakfast_included']) ? true : false,
+                'is_prepayment_required' => isset($request->settings['prepayment_required']) ? true : false,
+                'prepayment_price' => isset($request->prices['prepayment']) ? $request->prices['prepayment'] : 0,
+                'breakfast_price' => isset($request->prices['breakfast']) ? $request->prices['breakfast'] : 0,
+                'lunch_price' => $request->prices['lunch'],
+                'dinner_price' => $request->prices['dinner'],
+                'accommodation_price' => $request->prices['accommodation'],
+                'per_dog_price' => $request->prices['per_dog'],
             ])->save();
 
             // judges
@@ -187,6 +195,8 @@ class EventController extends Controller
                 $pivotData[$d['id']] = [
                     'day' => $d['day'] ?? null,
                     'max_participants' => $d['max_participants'],
+                    'price' => $d['price'] ?? null, // TODO: should be required?
+                    'member_price' => $d['member_price'] ?? null,
                 ];
             }
 
@@ -202,7 +212,6 @@ class EventController extends Controller
                 $categoryIds = collect($d['categories'])->pluck('id')->toArray();
                 $disciplineEvent->categories()->sync($categoryIds);
             }
-
         });
 
         return redirect()

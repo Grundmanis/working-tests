@@ -13,7 +13,7 @@
                     <a href="/dogs" class="text-blue-600 hover:underline font-medium">{{ __('myDogs') }}</a>
                 </li>
                 <li><span class="mx-2 text-gray-400">/</span></li>
-                <li class="text-gray-700 font-semibold">{{ __('editDog') }}</li>
+                <li class="text-gray-700 font-semibold">{{ $dog->homeName }}</li>
             </ol>
         </nav>
     </div>
@@ -81,8 +81,8 @@
                                 <select name="breed"
                                     class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-none">
                                     <option value="">{{ __('select') }}</option>
-                                    @foreach ($dog->breeds() as $key => $breed)
-                                        <option @if ($dog->breed == $key) selected @endif
+                                    @foreach ($breeds as $key => $breed)
+                                        <option @if (old('breed', $dog->breed) == $key) selected @endif
                                             value="{{ $key }}">{{ $breed }}</option>
                                     @endforeach
                                 </select>
